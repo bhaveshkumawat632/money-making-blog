@@ -3,6 +3,8 @@ name: Deploy Astro site to GitHub Pages
 on:
   push:
     branches: [ main ]
+  schedule:
+    - cron: '0 12 * * *'  # Runs daily at 12:00 UTC
   workflow_dispatch:
 
 permissions:

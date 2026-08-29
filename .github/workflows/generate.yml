@@ -1,0 +1,37 @@
+name: Autonomous AI Content Generator
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # Runs daily at 12:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Install Dependencies
+        run: pip install requests
+        
+      - name: Generate Article
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        run: python3 autonomous_engine/generate_article.py
+        
+      - name: Commit and Push
+        run: |
+          git config --global user.name "Autonomous Engine"
+          git config --global user.email "bot@wealthautomater.ai"
+          git add .
+          git commit -m "Auto-publish: New AI Article" || echo "No changes to commit"
+          git push
