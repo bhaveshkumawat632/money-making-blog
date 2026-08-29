@@ -7,12 +7,17 @@ import random
 import subprocess
 
 PEXELS_KEY = os.environ.get("PEXELS_API_KEY", "cBBsobTILBswJ5myAoj74hr3Vw2ylE4zUpXCRtbLsrQGvGvzPQYGEEzf")
-BLOG_DIR = "/home/junglee01/money-making-blog/src/content/blog"
+
+# Use relative paths so it works inside GitHub Actions
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BLOG_DIR = os.path.join(BASE_DIR, "src", "content", "blog")
 
 TOPICS = [
     ("How Automated Agents are Replacing Junior Devs in 2026", "technology software ai"),
     ("The Next Crypto Bull Run: Why Utility Tokens Are Back", "crypto finance money"),
     ("Building a $10k/mo Passive Income Stack with Free Tools", "business passive income"),
+    ("Why SEO in 2026 is All About AI Agents", "seo marketing artificial intelligence"),
+    ("The Death of the Traditional 9-to-5 Job", "office work freedom wealth")
 ]
 
 def get_cover_image(query):
@@ -67,10 +72,8 @@ Stay tuned for more insights, and don't forget to subscribe to the WealthAutomat
         
     print(f"✅ Generated article: {filepath}")
     
-    # Auto commit
-    subprocess.run(["git", "add", "."], cwd="/home/junglee01/money-making-blog")
-    subprocess.run(["git", "commit", "-m", f"Auto-publish: {title}"], cwd="/home/junglee01/money-making-blog")
-    # subprocess.run(["git", "push"], cwd="/home/junglee01/money-making-blog")
+    subprocess.run(["git", "add", "."], cwd=BASE_DIR)
+    # The actual commit and push is handled by the bash step in generate.yml
 
 if __name__ == "__main__":
     generate()
