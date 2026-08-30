@@ -1,48 +1,102 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
+import AdUnit from '../components/AdUnit.astro';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			body {
+				background-color: #030712; /* Tailwind gray-950 */
+				color: #f9fafb;
+				font-family: 'Inter', system-ui, -apple-system, sans-serif;
+			}
+			.hero-glow {
+				position: absolute;
+				top: 0; left: 50%;
+				transform: translateX(-50%);
+				width: 800px; height: 300px;
+				background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, rgba(0,0,0,0) 70%);
+				z-index: -1;
+				pointer-events: none;
+			}
+			.card {
+				background: rgba(31, 41, 55, 0.4);
+				border: 1px solid rgba(75, 85, 99, 0.4);
+				transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+			}
+			.card:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(56, 189, 248, 0.2);
+				border-color: rgba(56, 189, 248, 0.5);
+			}
+		</style>
 	</head>
-	<body>
+	<body class="antialiased min-h-screen flex flex-col relative">
+		<div class="hero-glow"></div>
 		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+		
+		<main class="flex-grow max-w-5xl mx-auto px-6 py-12 w-full">
+			<section class="text-center mb-16 pt-8">
+				<h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-300">
+					The Passive Income Machine
+				</h1>
+				<p class="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+					Next-gen insights on automated wealth, AI architecture, and mastering the modern economy.
+				</p>
+			</section>
+
+			<div class="mb-12">
+				<AdUnit />
+			</div>
+
+			<section>
+				<h2 class="text-2xl font-bold border-b border-gray-800 pb-4 mb-8 flex items-center gap-2">
+					<span class="w-2 h-6 bg-blue-500 rounded"></span>
+					Latest Transmission
+				</h2>
+				<ul class="grid grid-cols-1 md:grid-cols-2 gap-8">
+					{
+						posts.map((post) => (
+							<li class="group">
+								<a href={`/money-making-blog/blog/${post.id}/`} class="block card rounded-2xl overflow-hidden h-full flex flex-col">
+									<div class="relative overflow-hidden aspect-video">
+										<img 
+											src={post.data.heroImage} 
+											alt="" 
+											class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+										/>
+										<div class="absolute inset-0 bg-gradient-to-t from-[#030712] to-transparent opacity-80"></div>
+									</div>
+									<div class="p-6 flex flex-col flex-grow">
+										<h4 class="text-2xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors">
+											{post.data.title}
+										</h4>
+										<p class="text-gray-400 text-sm mb-4 flex-grow line-clamp-3">
+											{post.data.description}
+										</p>
+										<div class="text-xs font-mono text-teal-400 font-semibold uppercase tracking-wider flex items-center gap-2">
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+											<FormattedDate date={post.data.pubDate} />
+										</div>
+									</div>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
 		</main>
 		<Footer />
 	</body>
