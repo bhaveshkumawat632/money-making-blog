@@ -9,6 +9,13 @@ import requests
 PEXELS_KEY = os.environ.get("PEXELS_API_KEY")
 BAZAARLINK_API_KEY = os.environ.get("BAZAARLINK_API_KEY")
 BAZAARLINK_MODEL = os.environ.get("BAZAARLINK_MODEL", "auto:free")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+GROQ_MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
+MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY")
+MISTRAL_MODEL = os.environ.get("MISTRAL_MODEL", "mistral-small-latest")
+LLM7_API_KEY = os.environ.get("LLM7_API_KEY", "unused")
+LLM7_MODEL = os.environ.get("LLM7_MODEL", "default")
+LLM7_ENABLED = os.environ.get("LLM7_ENABLED", "1") != "0"
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -128,33 +135,103 @@ def generate_with_gemini():
     res.raise_for_status()
     return parse_article_json(extract_text_from_gemini(res.json()))
 
-def generate_with_bazaarlink():
-    if not BAZAARLINK_API_KEY:
+def extract_openai_chat_text(response_json):
+    content = response_json["choices"][0]["message"]["content"]
+    if isinstance(content, list):
+        return "\n".join(
+            item.get("text", "") for item in content if item.get("type") == "text"
+        ).strip()
+    return content
+
+def generate_with_openai_compatible(name, base_url, api_key, model, extra_headers=None):
+    if not api_key:
         return None
 
     payload = {
-        "model": BAZAARLINK_MODEL,
+        "model": model,
         "messages": [{"role": "user", "content": article_prompt()}],
         "temperature": 0.8,
         "max_tokens": 5000,
         "response_format": {"type": "json_object"},
     }
     headers = {
-        "Authorization": f"Bearer {BAZAARLINK_API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://bhaveshkumawat632.github.io/money-making-blog/",
-        "X-Title": "Money Making Blog Autonomous Engine",
     }
+    if extra_headers:
+        headers.update(extra_headers)
 
     res = requests.post(
-        "https://api.bazaarlink.ai/v1/chat/completions",
+        f"{base_url.rstrip('/')}/chat/completions",
         headers=headers,
         json=payload,
         timeout=90,
     )
     res.raise_for_status()
-    text = res.json()["choices"][0]["message"]["content"]
-    return parse_article_json(text)
+    return parse_article_json(extract_openai_chat_text(res.json()))
+
+def generate_with_bazaarlink():
+    return generate_with_openai_compatible(
+        "BazaarLink",
+        "https://api.bazaarlink.ai/v1",
+        BAZAARLINK_API_KEY,
+        BAZAARLINK_MODEL,
+        {
+            "HTTP-Referer": "https://bhaveshkumawat632.github.io/money-making-blog/",
+            "X-Title": "Money Making Blog Autonomous Engine",
+        },
+    )
+
+def generate_with_groq():
+    return generate_with_openai_compatible(
+        "Groq",
+        "https://api.groq.com/openai/v1",
+        GROQ_API_KEY,
+        GROQ_MODEL,
+    )
+
+def generate_with_mistral():
+    return generate_with_openai_compatible(
+        "Mistral",
+        "https://api.mistral.ai/v1",
+        MISTRAL_API_KEY,
+        MISTRAL_MODEL,
+    )
+
+def generate_with_llm7():
+    if not LLM7_ENABLED:
+        return None
+    return generate_with_openai_compatible(
+        "LLM7",
+        "https://api.llm7.io/v1",
+        LLM7_API_KEY,
+        LLM7_MODEL,
+    )
+
+def generate_with_ai_provider():
+    providers = [
+        ("BazaarLink", generate_with_bazaarlink),
+        ("Groq", generate_with_groq),
+        ("Mistral", generate_with_mistral),
+        ("LLM7", generate_with_llm7),
+        ("Gemini", generate_with_gemini),
+    ]
+    failures = []
+
+    for name, provider in providers:
+        try:
+            article = provider()
+        except Exception as e:
+            failures.append(f"{name}: {e}")
+            print(f"{name} generation failed, trying next provider: {e}")
+            continue
+
+        if article:
+            return article, name
+
+    if failures:
+        print("All AI providers failed; using local fallback.")
+    return fallback_article(), "fallback"
 
 def fallback_article():
     topic = random.choice(TOPICS)
@@ -185,18 +262,7 @@ If you want to stay ahead of the curve, you must fundamentally change your relat
 def generate():
     os.makedirs(BLOG_DIR, exist_ok=True)
 
-    try:
-        article = generate_with_bazaarlink() or generate_with_gemini() or fallback_article()
-        if BAZAARLINK_API_KEY:
-            source = "BazaarLink"
-        elif GEMINI_API_KEY:
-            source = "Gemini"
-        else:
-            source = "fallback"
-    except Exception as e:
-        print(f"AI generation failed, using local fallback: {e}")
-        article = fallback_article()
-        source = "fallback"
+    article, source = generate_with_ai_provider()
 
     title = article["title"]
     img = get_cover_image(article["query"])
@@ -215,7 +281,7 @@ heroImage: "{yaml_escape(img)}"
     filepath = os.path.join(BLOG_DIR, f"{slugify(title)}.md")
     with open(filepath, "w") as f:
         f.write(content)
-        
+
     print(f"Generated article with {source}: {filepath}")
 
 if __name__ == "__main__":

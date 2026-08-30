@@ -28,6 +28,13 @@ jobs:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           BAZAARLINK_API_KEY: ${{ secrets.BAZAARLINK_API_KEY }}
           BAZAARLINK_MODEL: auto:free
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL: openai/gpt-oss-20b
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          MISTRAL_MODEL: mistral-small-latest
+          LLM7_API_KEY: ${{ secrets.LLM7_API_KEY }}
+          LLM7_MODEL: default
+          LLM7_ENABLED: "1"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: gemini-3.6-flash
         run: python3 autonomous_engine/generate_article.py
