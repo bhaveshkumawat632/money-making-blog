@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bhaveshkumawat632.github.io/money-making-blog/sitemap-index.xml
