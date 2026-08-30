@@ -16,84 +16,94 @@ const posts = (await getCollection('blog')).sort(
 <html lang="en" class="dark">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 		<style>
+			/* Custom Trailing Cursor */
+			body { cursor: none; }
+			#cursor-dot {
+				position: fixed; width: 6px; height: 6px; background: #fff;
+				border-radius: 50%; pointer-events: none; z-index: 9999;
+				transform: translate(-50%, -50%);
+			}
+			#cursor-ring {
+				position: fixed; width: 36px; height: 36px;
+				border: 1px solid rgba(255, 255, 255, 0.4);
+				border-radius: 50%; pointer-events: none; z-index: 9998;
+				transform: translate(-50%, -50%);
+				transition: width 0.2s, height 0.2s;
+			}
+
+			/* WebGL Background */
+			#bg-canvas {
+				position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+				z-index: -2; opacity: 0.3; pointer-events: none;
+			}
+
 			/* Linear-style Glow Effect */
-			.cards-grid:hover > .card::after {
-				opacity: 1;
-			}
-			.card {
-				background-color: rgba(255, 255, 255, 0.02);
-				position: relative;
-			}
+			.cards-grid:hover > .card::after { opacity: 1; }
+			.card { background-color: rgba(255, 255, 255, 0.03); position: relative; }
 			.card::before, .card::after {
-				content: "";
-				position: absolute;
-				left: 0; top: 0; width: 100%; height: 100%;
-				border-radius: inherit;
-				transition: opacity 0.3s;
-				z-index: -1;
+				content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+				border-radius: inherit; transition: opacity 0.3s; z-index: -1;
 			}
 			.card::before {
-				background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
+				background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.05), transparent 40%);
 				opacity: 0;
 			}
 			.card::after {
-				background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.4), transparent 40%);
+				background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.2), transparent 40%);
 				opacity: 0;
 			}
-			.card:hover::before {
-				opacity: 1;
-			}
+			.card:hover::before { opacity: 1; }
 			.card-content {
-				background-color: #0a0a0a;
-				margin: 1px;
-				height: calc(100% - 2px);
+				background-color: #050505; margin: 1px; height: calc(100% - 2px);
 				border-radius: inherit;
 			}
 		</style>
 	</head>
-	<body class="bg-black text-[#ededed] min-h-screen flex flex-col font-sans antialiased selection:bg-white selection:text-black">
+	<body class="bg-[#050505] text-[#ededed] min-h-screen flex flex-col font-sans antialiased selection:bg-white selection:text-black">
+		<div id="cursor-dot"></div>
+		<div id="cursor-ring"></div>
+		<canvas id="bg-canvas"></canvas>
+
 		<Header />
 		
-		<main class="flex-grow max-w-5xl mx-auto px-6 py-24 w-full">
+		<main class="flex-grow max-w-5xl mx-auto px-6 py-24 w-full relative z-10">
 			<section class="mb-24 relative">
-				<div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-white opacity-5 blur-[120px] rounded-full pointer-events-none"></div>
-				<h1 class="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-6 leading-[1.1] max-w-4xl">
-					Engineering the future of <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-600">autonomous systems.</span>
+				<div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-500 opacity-5 blur-[120px] rounded-full pointer-events-none"></div>
+				<h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter text-white mb-6 leading-[1.1] max-w-4xl drop-shadow-2xl">
+					Engineering the future of <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-500">autonomous systems.</span>
 				</h1>
 				<p class="text-[#888] text-xl max-w-2xl leading-relaxed">
 					Deep dives into algorithmic wealth, system architecture, and modern market mechanics. Built for builders.
 				</p>
 			</section>
 
-			<div class="mb-16">
-				<AdUnit />
-			</div>
+			<div class="mb-16"><AdUnit /></div>
 
 			<section>
-				<div class="flex items-center justify-between mb-8 pb-4">
+				<div class="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
 					<h2 class="text-xs font-semibold text-white uppercase tracking-widest">Latest Transmissions</h2>
-					<a href="/money-making-blog/blog" class="text-sm text-white hover:text-[#888] transition-colors">View all ↗</a>
 				</div>
 				<div class="cards-grid grid grid-cols-1 md:grid-cols-2 gap-6" id="cards">
 					{
 						posts.map((post) => (
-							<a href={`/money-making-blog/blog/${post.id}/`} class="card rounded-2xl block">
-								<div class="card-content p-5 flex flex-col">
-									<div class="aspect-video w-full overflow-hidden rounded-xl mb-6 bg-[#111] relative">
+							<a href={`/money-making-blog/blog/${post.id}/`} class="card rounded-2xl block group cursor-none">
+								<div class="card-content p-6 flex flex-col">
+									<div class="aspect-[16/9] w-full overflow-hidden rounded-xl mb-6 bg-[#111] relative border border-white/5">
 										{post.data.heroImage && (
 											<img 
 												src={post.data.heroImage} 
 												alt="" 
-												class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+												class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale hover:grayscale-0"
 											/>
 										)}
 									</div>
 									<div class="flex-grow">
-										<div class="text-[#888] text-xs font-mono mb-3">
+										<div class="text-[#666] text-xs font-mono mb-3 uppercase tracking-wider">
 											<FormattedDate date={post.data.pubDate} />
 										</div>
-										<h3 class="text-2xl font-bold text-white mb-3 leading-snug">{post.data.title}</h3>
+										<h3 class="text-2xl font-bold text-white mb-3 leading-snug group-hover:text-blue-400 transition-colors">{post.data.title}</h3>
 										<p class="text-[#888] text-sm line-clamp-2 leading-relaxed">
 											{post.data.description}
 										</p>
@@ -108,16 +118,67 @@ const posts = (await getCollection('blog')).sort(
 		<Footer />
 
 		<script>
+			// Trailing Cursor
+			const dot = document.getElementById('cursor-dot');
+			const ring = document.getElementById('cursor-ring');
+			let mx = window.innerWidth/2, my = window.innerHeight/2;
+			let rx = mx, ry = my;
+			document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx+'px'; dot.style.top = my+'px'; });
+			function animCursor() { rx += (mx - rx) * 0.15; ry += (my - ry) * 0.15; ring.style.left = rx+'px'; ring.style.top = ry+'px'; requestAnimationFrame(animCursor); }
+			animCursor();
+			document.querySelectorAll('a').forEach(el => {
+				el.addEventListener('mouseenter', () => { ring.style.width='60px'; ring.style.height='60px'; ring.style.backgroundColor='rgba(255,255,255,0.1)'; });
+				el.addEventListener('mouseleave', () => { ring.style.width='36px'; ring.style.height='36px'; ring.style.backgroundColor='transparent'; });
+			});
+
+			// Linear Hover
 			document.getElementById("cards").onmousemove = e => {
 				for(const card of document.getElementsByClassName("card")) {
-					const rect = card.getBoundingClientRect(),
-						  x = e.clientX - rect.left,
-						  y = e.clientY - rect.top;
-
-					card.style.setProperty("--mouse-x", `${x}px`);
-					card.style.setProperty("--mouse-y", `${y}px`);
+					const rect = card.getBoundingClientRect();
+					card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+					card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
 				}
 			}
+
+			// ThreeJS Constellation Background
+			const canvas = document.getElementById('bg-canvas');
+			const scene = new THREE.Scene();
+			const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+			const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.setPixelRatio(window.devicePixelRatio);
+
+			const geometry = new THREE.BufferGeometry();
+			const count = 300;
+			const pos = new Float32Array(count * 3);
+			for(let i=0; i<count*3; i++) pos[i] = (Math.random() - 0.5) * 40;
+			geometry.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+			
+			const material = new THREE.PointsMaterial({ size: 0.05, color: 0xffffff, transparent: true, opacity: 0.5 });
+			const points = new THREE.Points(geometry, material);
+			scene.add(points);
+			camera.position.z = 10;
+
+			let tx = 0, ty = 0;
+			document.addEventListener('mousemove', e => {
+				tx = (e.clientX / window.innerWidth) * 2 - 1;
+				ty = -(e.clientY / window.innerHeight) * 2 + 1;
+			});
+
+			function animate() {
+				requestAnimationFrame(animate);
+				points.rotation.x += 0.0005;
+				points.rotation.y += 0.0005;
+				camera.position.x += (tx * 2 - camera.position.x) * 0.05;
+				camera.position.y += (ty * 2 - camera.position.y) * 0.05;
+				camera.lookAt(scene.position);
+				renderer.render(scene, camera);
+			}
+			animate();
+			window.addEventListener('resize', () => {
+				camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+			});
 		</script>
 	</body>
 </html>
