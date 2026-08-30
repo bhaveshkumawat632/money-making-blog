@@ -268,11 +268,12 @@ def generate():
     img = get_cover_image(article["query"])
     body_markdown = article["body_markdown"].strip()
 
-    # --- AFFILIATE MARKETING INJECTION ---
+    # --- AMAZON AFFILIATE INJECTION ---
+    amazon_tag = "bhaveshmoney-21"
     affiliate_blocks = [
-        "\n\n---\n> 🚀 **Scale Your Wealth Systems**: Ready to deploy your own autonomous AI applications? Get up to **75% OFF + Free Domain** with Hostinger.\n> 👉 [Claim Your Premium Hosting Discount Here](https://hostinger.com?ref=autonomous)\n---",
-        "\n\n---\n> 📈 **Elite Algo-Trading**: Stop trading with emotions. Deploy quantitative bots and trade securely.\n> 👉 [Join Binance & Claim Your $100 Sign-Up Bonus](https://binance.com/?ref=wealthsystem)\n---",
-        "\n\n---\n> 🤖 **Automate Your Attention**: The 1% use AI to scale content. Generate massive traffic automatically.\n> 👉 [Access The Ultimate AI Generator Toolkit](https://jasper.ai?ref=matrix)\n---"
+        f"\n\n---\n> 📚 **Master Your Wealth Mindset**: The 1% build systems, the 99% consume. Read *The Psychology of Money* to rewire your brain for wealth.\n> 👉 [Get the book on Amazon here](https://www.amazon.com/dp/0857197681/?tag={amazon_tag})\n---",
+        f"\n\n---\n> 🚀 **Scale Your Productivity**: You can't build empires while distracted. Learn the secrets of ultimate focus in *Deep Work*.\n> 👉 [Get the book on Amazon here](https://www.amazon.com/dp/1455586692/?tag={amazon_tag})\n---",
+        f"\n\n---\n> 📈 **Automate Your Success**: Small systems compound into massive wealth. Discover the exact framework in *Atomic Habits*.\n> 👉 [Get the book on Amazon here](https://www.amazon.com/dp/0735211299/?tag={amazon_tag})\n---"
     ]
     chosen_affiliate = random.choice(affiliate_blocks)
     body_markdown += chosen_affiliate
