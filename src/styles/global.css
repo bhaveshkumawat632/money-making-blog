@@ -1,20 +1,15 @@
 @import "tailwindcss";
 
-/* Minimal overrides for dark premium tech theme */
-:root {
-	--font-atkinson: 'Atkinson', sans-serif;
-}
-
 body {
 	margin: 0;
 	padding: 0;
-	background-color: #030712; /* Tailwind gray-950 */
-	color: #f9fafb; /* Tailwind gray-50 */
-	font-family: 'Inter', var(--font-atkinson), system-ui, sans-serif;
+	background-color: #000000;
+	color: #ededed;
+	font-family: 'Inter', system-ui, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
-
-img {
-	max-width: 100%;
-	height: auto;
-	border-radius: 8px;
+::selection {
+	background-color: #333;
+	color: #fff;
 }

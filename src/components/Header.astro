@@ -3,48 +3,20 @@ import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
 ---
 
-<header class="sticky top-0 z-50 glass-header">
+<header class="border-b border-white/10 bg-black/50 backdrop-blur-md sticky top-0 z-50">
 	<nav class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-		<h2 class="text-xl font-bold tracking-tight m-0">
-			<a href="/money-making-blog/" class="flex items-center gap-2 text-white no-underline hover:text-blue-400 transition-colors">
-				<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center text-sm">P</div>
-				{SITE_TITLE}
-			</a>
-		</h2>
-		<div class="internal-links flex gap-6 font-medium text-sm">
-			<HeaderLink href="/money-making-blog/">Home</HeaderLink>
-			<HeaderLink href="/money-making-blog/blog">Blog</HeaderLink>
-			<HeaderLink href="/money-making-blog/about">About</HeaderLink>
-		</div>
-		<div class="social-links hidden md:flex items-center gap-4">
-			<a href="#" target="_blank" class="text-gray-400 hover:text-white transition-colors">
-				<span class="sr-only">GitHub</span>
-				<svg viewBox="0 0 16 16" aria-hidden="true" width="24" height="24" fill="currentColor">
-					<path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-				</svg>
-			</a>
+		<a href="/money-making-blog/" class="flex items-center gap-3 text-white no-underline transition-opacity hover:opacity-80">
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+			<span class="font-semibold tracking-tight text-lg">{SITE_TITLE}</span>
+		</a>
+		<div class="flex gap-6 text-sm font-medium">
+			<HeaderLink href="/money-making-blog/">Overview</HeaderLink>
+			<HeaderLink href="/money-making-blog/blog">Archive</HeaderLink>
 		</div>
 	</nav>
 </header>
 <style>
-	.glass-header {
-		background: rgba(3, 7, 18, 0.7);
-		backdrop-filter: blur(12px);
-		-webkit-backdrop-filter: blur(12px);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-	}
-	.internal-links a {
-		color: #9ca3af;
-		text-decoration: none;
-		padding-bottom: 4px;
-		border-bottom: 2px solid transparent;
-		transition: all 0.2s ease;
-	}
-	.internal-links a:hover {
-		color: #f3f4f6;
-	}
-	.internal-links a.active {
-		color: #38bdf8;
-		border-bottom-color: #38bdf8;
-	}
+	a { color: #888; transition: color 0.2s ease; }
+	a:hover { color: #fff; }
+	a.active { color: #fff; }
 </style>
