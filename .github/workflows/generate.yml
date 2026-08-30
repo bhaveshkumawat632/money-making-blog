@@ -26,6 +26,10 @@ jobs:
       - name: Generate Article
         env:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          BAZAARLINK_API_KEY: ${{ secrets.BAZAARLINK_API_KEY }}
+          BAZAARLINK_MODEL: auto:free
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-3.6-flash
         run: python3 autonomous_engine/generate_article.py
         
       - name: Commit and Push
