@@ -1,10 +1,9 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
 import AdUnit from '../components/AdUnit.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
@@ -12,76 +11,80 @@ type Props = CollectionEntry<'blog'>['data'];
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
-<html lang="en">
+<html lang="en" class="dark">
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
+			body {
+				background-color: #030712;
+				color: #e5e7eb;
+				font-family: 'Inter', system-ui, sans-serif;
 			}
 			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
+				color: #d1d5db;
+				font-size: 1.125rem;
+				line-height: 1.8;
 			}
-			.title {
+			.prose h1, .prose h2, .prose h3 {
+				color: #f3f4f6;
+				font-weight: 800;
+				margin-top: 2.5em;
 				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
 			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
+			.prose a {
+				color: #38bdf8;
+				text-decoration: none;
+				border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+				transition: border-color 0.2s;
 			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
+			.prose a:hover {
+				border-color: #38bdf8;
 			}
-			.last-updated-on {
-				font-style: italic;
+			.prose strong {
+				color: #f9fafb;
+				font-weight: 700;
+			}
+			.hero-image {
+				box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 30px rgba(56, 189, 248, 0.15);
 			}
 		</style>
 	</head>
 
-	<body>
+	<body class="antialiased min-h-screen flex flex-col">
 		<Header />
-		<main>
+		
+		<main class="flex-grow w-full max-w-4xl mx-auto px-6 py-12">
 			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
+				<div class="mb-12 rounded-3xl overflow-hidden hero-image border border-gray-800">
+					{heroImage && <img width={1020} height={510} src={heroImage} alt="" class="w-full h-auto object-cover" />}
 				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
+				<div class="prose max-w-none">
+					<div class="text-center mb-12">
+						<div class="text-teal-400 font-mono text-sm tracking-widest uppercase mb-4 font-bold flex justify-center items-center gap-2">
 							<FormattedDate date={pubDate} />
 							{
 								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
+									<span class="text-gray-500 italic">
+										(Updated on <FormattedDate date={updatedDate} />)
+									</span>
 								)
 							}
 						</div>
-						<h1>{title}</h1>
-						<hr />
+						<h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">{title}</h1>
+						<div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-teal-400 mx-auto rounded-full mb-8"></div>
 					</div>
-					<slot />
 					
-					<!-- Auto-injected AdSense Unit -->
-					<AdUnit adSlot="bottom-article-slot" />
+					<div class="my-10">
+						<AdUnit />
+					</div>
+					
+					<div class="content-wrapper">
+						<slot />
+					</div>
+					
+					<div class="my-10">
+						<AdUnit />
+					</div>
 				</div>
 			</article>
 		</main>
