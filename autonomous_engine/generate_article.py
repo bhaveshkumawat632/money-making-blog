@@ -268,6 +268,16 @@ def generate():
     img = get_cover_image(article["query"])
     body_markdown = article["body_markdown"].strip()
 
+    # --- AFFILIATE MARKETING INJECTION ---
+    affiliate_blocks = [
+        "\n\n---\n> 🚀 **Scale Your Wealth Systems**: Ready to deploy your own autonomous AI applications? Get up to **75% OFF + Free Domain** with Hostinger.\n> 👉 [Claim Your Premium Hosting Discount Here](https://hostinger.com?ref=autonomous)\n---",
+        "\n\n---\n> 📈 **Elite Algo-Trading**: Stop trading with emotions. Deploy quantitative bots and trade securely.\n> 👉 [Join Binance & Claim Your $100 Sign-Up Bonus](https://binance.com/?ref=wealthsystem)\n---",
+        "\n\n---\n> 🤖 **Automate Your Attention**: The 1% use AI to scale content. Generate massive traffic automatically.\n> 👉 [Access The Ultimate AI Generator Toolkit](https://jasper.ai?ref=matrix)\n---"
+    ]
+    chosen_affiliate = random.choice(affiliate_blocks)
+    body_markdown += chosen_affiliate
+    # -------------------------------------
+
     content = f"""---
 title: "{yaml_escape(title)}"
 description: "{yaml_escape(article['description'])}"
