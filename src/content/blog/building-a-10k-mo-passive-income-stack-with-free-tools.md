@@ -1,7 +1,7 @@
 ---
 title: "Building a $10k/mo Passive Income Stack with Free Tools"
 description: "The barrier to entry for digital entrepreneurship has hit absolute zero. In 2026, you do not need venture capital, you d..."
-pubDate: "Sep 07 2026"
+pubDate: "Sep 16 2026"
 heroImage: "https://images.pexels.com/photos/8345644/pexels-photo-8345644.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200"
 ---
 
