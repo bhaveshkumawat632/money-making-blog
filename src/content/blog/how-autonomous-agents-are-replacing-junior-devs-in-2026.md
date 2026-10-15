@@ -1,7 +1,7 @@
 ---
 title: "How Autonomous Agents are Replacing Junior Devs in 2026"
 description: "The software engineering landscape has undergone a seismic shift. We are no longer debating whether AI will replace codi..."
-pubDate: "Sep 26 2026"
+pubDate: "Oct 15 2026"
 heroImage: "https://images.pexels.com/photos/1921326/pexels-photo-1921326.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200"
 ---
 
