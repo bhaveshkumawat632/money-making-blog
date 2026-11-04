@@ -1,7 +1,7 @@
 ---
 title: "Why SEO in 2026 is All About AI Agents"
 description: "Search Engine Optimization is dead. At least, the 2020 version of it is. Backlinks, keyword stuffing, and spun content n..."
-pubDate: "Oct 25 2026"
+pubDate: "Nov 04 2026"
 heroImage: "https://images.pexels.com/photos/12969403/pexels-photo-12969403.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200"
 ---
 
